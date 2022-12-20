@@ -2,6 +2,7 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 const express = require("express");
 const app = express();
+const cors = require('cors')
 
 const aws = require("aws-sdk");
 const multer = require("multer");
@@ -9,11 +10,18 @@ const multerS3 = require("multer-s3");
 
 //routes
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server,{
+    cors: {
+        origin: "http://127.0.0.1:5500",
+        // methods: ["GET", "POST","DELETE"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+      }
+});
 
 //Set the public folder
 app.use(express.static(__dirname));
-
+app.use(cors())
 io.on('connection', (socket) => {
     try {
         var id = socket.id;
